@@ -1,8 +1,21 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Table
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from .database import Base
 
+role_permissions = Table(
+    "role_permissions",
+    Base.metadata,
+    Column("role_id", ForeignKey("roles.id")),
+    Column("permission_id", ForeignKey("permissions.id"))
+)
+
+user_roles = Table(
+    "user_roles",
+    Base.metadata,
+    Column("user_id", ForeignKey("users.id")),
+    Column("role_id", ForeignKey("roles.id"))
+)
 
 class User(Base):
     __tablename__ = "users"
@@ -13,7 +26,8 @@ class User(Base):
     
     accounts = relationship("Account", back_populates="user")
     transactions = relationship("Transaction", back_populates="user")
-
+    roles = relationship("Role", secondary=user_roles, backref="users")
+    
 class Account(Base):
     __tablename__ = "accounts"
 
@@ -25,17 +39,40 @@ class Account(Base):
     user = relationship("User", back_populates="accounts")
     transactions = relationship("Transaction", back_populates="account")
 
-
 class Transaction(Base):
     __tablename__ = "transactions"
 
-    id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"))
-    account_id = Column(Integer, ForeignKey("accounts.id"))
-    type = Column(String)  # deposit / withdrawal
+    id = Column(Integer, primary_key=True)
     amount = Column(Float)
-    date = Column(DateTime, default=datetime.utcnow)
+    type = Column(String)  # deposit / withdrawal
     description = Column(String, nullable=True)
 
-    user = relationship("User", back_populates="transactions")
-    account = relationship("Account", back_populates="transactions")
+    account_id = Column(Integer, ForeignKey("accounts.id"))
+    category_id = Column(Integer, ForeignKey("categories.id"))
+
+    user_id = Column(Integer, ForeignKey("users.id"))
+
+    category = relationship("Category")
+
+class Category(Base):
+    __tablename__ = "categories"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    type = Column(String)  # "income" or "expense"
+
+    user_id = Column(Integer, ForeignKey("users.id"))
+
+    user = relationship("User", backref="categories")
+    
+class Role(Base):
+    __tablename__ = "roles"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True)  # admin, user
+    
+class Permission(Base):
+    __tablename__ = "permissions"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String, unique=True)  # create_tx, view_dashboard

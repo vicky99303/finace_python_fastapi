@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .routers import auth, transactions, dashboard
+from .routers import auth, transactions, dashboard, rbac, accounts, categories
 from .database import Base, engine
 
 # Create DB tables
@@ -12,3 +12,6 @@ app = FastAPI(debug=True)
 app.include_router(auth.router, prefix="/auth", tags=["Auth"])
 app.include_router(transactions.router, prefix="/transactions", tags=["Transactions"])
 app.include_router(dashboard.router, prefix="/dashboard", tags=["Dashboard"])
+app.include_router(rbac.router, prefix="/rbac", tags=["RBAC"])
+app.include_router(accounts.router, prefix="/accounts", tags=["Accounts"])
+app.include_router(categories.router, prefix="/categories", tags=["Categories"])
