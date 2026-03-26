@@ -46,13 +46,11 @@ class Transaction(Base):
     amount = Column(Float)
     type = Column(String)  # deposit / withdrawal
     description = Column(String, nullable=True)
-
     account_id = Column(Integer, ForeignKey("accounts.id"))
     category_id = Column(Integer, ForeignKey("categories.id"))
-
     user_id = Column(Integer, ForeignKey("users.id"))
-
     category = relationship("Category")
+    
 
 class Category(Base):
     __tablename__ = "categories"
@@ -64,7 +62,30 @@ class Category(Base):
     user_id = Column(Integer, ForeignKey("users.id"))
 
     user = relationship("User", backref="categories")
-    
+
+class Budget(Base):
+    __tablename__ = "budgets"
+
+    id = Column(Integer, primary_key=True, index=True)
+    amount = Column(Float, nullable=False)
+    month = Column(Integer, nullable=False)
+    year = Column(Integer, nullable=False)
+
+    user_id = Column(Integer, ForeignKey("users.id"))
+    category_id = Column(Integer, ForeignKey("categories.id"))
+
+    category = relationship("Category")
+
+class Goal(Base):
+    __tablename__ = "goals"
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    target_amount = Column(Float)
+    saved_amount = Column(Float, default=0)
+
+    user_id = Column(Integer, ForeignKey("users.id"))
+       
 class Role(Base):
     __tablename__ = "roles"
 
