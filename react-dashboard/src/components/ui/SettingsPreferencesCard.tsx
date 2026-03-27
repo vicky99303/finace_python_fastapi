@@ -32,7 +32,7 @@ function PreferenceRow({
 
 export default function SettingsPreferencesCard({ preferences }: Props) {
     return (
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="w-full min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <h3 className="text-lg font-semibold text-slate-900">Preferences</h3>
             <p className="mt-1 text-sm text-slate-500">
                 Manage notifications and reporting options

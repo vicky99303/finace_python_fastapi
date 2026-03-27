@@ -6,7 +6,7 @@ interface Props {
 
 export default function BudgetProgressCard({ budgets }: Props) {
     return (
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="w-full min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <div className="mb-4">
                 <h3 className="text-lg font-semibold text-slate-900">Budget Progress</h3>
                 <p className="text-sm text-slate-500">

@@ -12,7 +12,7 @@ import {
 
 export default function Reports() {
     return (
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
             <PageHeader
                 title="Reports"
                 description="Analyze financial performance and export your summaries."

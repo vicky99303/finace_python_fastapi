@@ -10,7 +10,7 @@ export default function BudgetInsightsCard({ items }: Props) {
     const remaining = items.reduce((sum, item) => sum + (item.limit - item.spent), 0);
 
     return (
-        <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="w-full min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
             <h3 className="text-lg font-semibold text-slate-900">Budget Insights</h3>
             <p className="mt-1 text-sm text-slate-500">
                 Quick view of key budget observations

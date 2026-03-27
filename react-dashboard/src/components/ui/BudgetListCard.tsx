@@ -14,7 +14,7 @@ function getProgressColor(spent: number, limit: number) {
 
 export default function BudgetListCard({ items }: Props) {
   return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="w-full min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
       {/* Header */}
       <div className="mb-4 flex items-center justify-between">
         <div>

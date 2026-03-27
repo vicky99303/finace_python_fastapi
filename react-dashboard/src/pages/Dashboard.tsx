@@ -13,7 +13,7 @@ import {
 
 export default function Dashboard() {
     return (
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
             <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
                 {summaryCards.map((item) => (
                     <StatCard key={item.title} item={item} />

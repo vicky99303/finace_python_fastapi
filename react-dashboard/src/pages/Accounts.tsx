@@ -12,7 +12,7 @@ import {
 
 export default function Accounts() {
     return (
-        <div className="space-y-6">
+        <div className="min-w-0 space-y-6">
             <PageHeader
                 title="Accounts"
                 description="Monitor balances, wallets, cards, and recent account movement."
