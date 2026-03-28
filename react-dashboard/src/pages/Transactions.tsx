@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import PageHeader from "../components/ui/PageHeader";
 import TransactionStats from "../components/ui/TransactionStats";
 import TransactionFilters from "../components/ui/TransactionFilters";
@@ -6,7 +6,27 @@ import TransactionsTable from "../components/ui/TransactionsTable";
 import type { Transaction } from "../types/finance";
 import { getTransactions } from "../services/transactionService";
 
+function mapTransactions(items: Array<{
+    id: number;
+    description?: string | null;
+    category_id?: number | null;
+    amount: number;
+    type: string;
+    date?: string | null;
+}>): Transaction[] {
+    return items.map((item) => ({
+        id: item.id,
+        title: item.description || "Transaction",
+        category: item.category_id ? `Category #${item.category_id}` : "Uncategorized",
+        amount: item.amount,
+        type: item.type === "deposit" ? "income" : "expense",
+        date: item.date ? item.date.split("T")[0] : "-",
+        status: "completed",
+    }));
+}
+
 export default function Transactions() {
+    const hasFetched = useRef(false);
     const [search, setSearch] = useState("");
     const [selectedType, setSelectedType] = useState<"all" | "income" | "expense">("all");
     const [transactions, setTransactions] = useState<Transaction[]>([]);
@@ -14,13 +34,16 @@ export default function Transactions() {
     const [error, setError] = useState("");
 
     useEffect(() => {
+        if (hasFetched.current) return;
+        hasFetched.current = true;
+
         const fetchTransactions = async () => {
             try {
                 setLoading(true);
                 setError("");
 
                 const data = await getTransactions();
-                setTransactions(data);
+                setTransactions(mapTransactions(Array.isArray(data) ? data : []));
             } catch (err) {
                 setError(err instanceof Error ? err.message : "Something went wrong");
             } finally {
@@ -33,9 +56,13 @@ export default function Transactions() {
 
     const filteredTransactions = useMemo(() => {
         return transactions.filter((tx) => {
+            const title = tx.title ?? "";
+            const category = tx.category ?? "";
+            const normalizedSearch = search.toLowerCase();
+
             const matchesSearch =
-                tx.title.toLowerCase().includes(search.toLowerCase()) ||
-                tx.category.toLowerCase().includes(search.toLowerCase());
+                title.toLowerCase().includes(normalizedSearch) ||
+                category.toLowerCase().includes(normalizedSearch);
 
             const matchesType = selectedType === "all" ? true : tx.type === selectedType;
 

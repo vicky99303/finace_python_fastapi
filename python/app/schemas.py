@@ -6,21 +6,24 @@ from datetime import datetime
 from pydantic import BaseModel, ConfigDict
 
 
-# Create Transaction
+
 class TransactionCreate(BaseModel):
     amount: float
-    type: str  # "deposit" or "withdrawal"
-    description: Optional[str] = None
-    account_id: int
-    category_id: int
+    type: str  # deposit | withdrawal
+    category_id: Optional[int] = None
 
-# Response
+
+class TransactionUpdate(BaseModel):
+    amount: Optional[float] = None
+    type: Optional[str] = None
+    category_id: Optional[int] = None
+
+
 class TransactionOut(BaseModel):
     id: int
     amount: float
     type: str
-    description: Optional[str]
-    created_at: datetime
+    category_id: Optional[int] = None
 
     class Config:
         from_attributes = True
@@ -91,3 +94,39 @@ class GoalOut(BaseModel):
     saved_amount: float
 
     model_config = ConfigDict(from_attributes=True)
+class SettingsProfile(BaseModel):
+    full_name: str
+    email: str
+    currency: str
+    timezone: str
+
+
+class SettingsPreferences(BaseModel):
+    email_alerts: bool
+    push_notifications: bool
+    weekly_reports: bool
+    dark_mode: bool
+
+
+class SettingsResponse(BaseModel):
+    profile: SettingsProfile
+    preferences: SettingsPreferences
+
+
+class SettingsUpdateProfile(BaseModel):
+    full_name: str
+    email: str
+    currency: str
+    timezone: str
+
+
+class SettingsUpdatePreferences(BaseModel):
+    email_alerts: bool
+    push_notifications: bool
+    weekly_reports: bool
+    dark_mode: bool
+
+
+class SettingsUpdateRequest(BaseModel):
+    profile: SettingsUpdateProfile
+    preferences: SettingsUpdatePreferences

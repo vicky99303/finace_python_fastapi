@@ -1,12 +1,23 @@
-import type { SettingsProfile } from "../../types/finance";
-
 interface Props {
-    profile: SettingsProfile;
+    profile: {
+        fullName: string;
+        email: string;
+        currency: string;
+        timezone: string;
+    };
+    onChange: (field: "fullName" | "email" | "currency" | "timezone", value: string) => void;
+    onSave: () => void;
+    saving?: boolean;
 }
 
-export default function SettingsProfileCard({ profile }: Props) {
+export default function SettingsProfileCard({
+    profile,
+    onChange,
+    onSave,
+    saving = false,
+}: Props) {
     return (
-        <div className="w-full min-w-0 rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <h3 className="text-lg font-semibold text-slate-900">Profile Settings</h3>
             <p className="mt-1 text-sm text-slate-500">
                 Update your account and regional preferences
@@ -18,7 +29,8 @@ export default function SettingsProfileCard({ profile }: Props) {
                         Full Name
                     </label>
                     <input
-                        defaultValue={profile.fullName}
+                        value={profile.fullName}
+                        onChange={(e) => onChange("fullName", e.target.value)}
                         className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none"
                     />
                 </div>
@@ -28,7 +40,8 @@ export default function SettingsProfileCard({ profile }: Props) {
                         Email Address
                     </label>
                     <input
-                        defaultValue={profile.email}
+                        value={profile.email}
+                        onChange={(e) => onChange("email", e.target.value)}
                         className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none"
                     />
                 </div>
@@ -38,7 +51,8 @@ export default function SettingsProfileCard({ profile }: Props) {
                         Currency
                     </label>
                     <select
-                        defaultValue={profile.currency}
+                        value={profile.currency}
+                        onChange={(e) => onChange("currency", e.target.value)}
                         className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none"
                     >
                         <option value="USD">USD</option>
@@ -52,7 +66,8 @@ export default function SettingsProfileCard({ profile }: Props) {
                         Timezone
                     </label>
                     <select
-                        defaultValue={profile.timezone}
+                        value={profile.timezone}
+                        onChange={(e) => onChange("timezone", e.target.value)}
                         className="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 outline-none"
                     >
                         <option value="Asia/Karachi">Asia/Karachi</option>
@@ -63,8 +78,13 @@ export default function SettingsProfileCard({ profile }: Props) {
             </div>
 
             <div className="mt-6 flex justify-end">
-                <button className="rounded-xl bg-slate-900 px-5 py-3 text-sm font-medium text-white hover:bg-slate-800">
-                    Save Changes
+                <button
+                    onClick={onSave}
+                    disabled={saving}
+                    type="button"
+                    className="rounded-xl bg-slate-900 px-5 py-3 text-sm font-medium text-white hover:bg-slate-800 disabled:opacity-50"
+                >
+                    {saving ? "Saving..." : "Save Changes"}
                 </button>
             </div>
         </div>

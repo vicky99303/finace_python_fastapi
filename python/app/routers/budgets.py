@@ -29,7 +29,44 @@ def create_budget(
 
 @router.get("/")
 def get_budgets(db: Session = Depends(get_db), user=Depends(get_current_user)):
-    return db.query(Budget).filter(Budget.user_id == user.id).all()
+    budgets = db.query(Budget).filter(Budget.user_id == user.id).all()
+
+    response = []
+    total_budget = 0
+    total_spent = 0
+
+    for b in budgets:
+        transactions = db.query(Transaction).filter(
+            Transaction.user_id == user.id,
+            Transaction.category_id == b.category_id,
+            Transaction.type == "withdrawal"
+        ).all()
+
+        spent = sum(t.amount for t in transactions)
+
+        total_budget += b.amount
+        total_spent += spent
+
+        response.append({
+            "id": b.id,
+            "category_id": b.category_id,
+            "category_name": b.category.name if hasattr(b, "category") and b.category else None,
+            "amount": b.amount,
+            "spent": spent,
+            "remaining": b.amount - spent,
+            "month": b.month,
+            "year": b.year
+        })
+
+    remaining = total_budget - total_spent
+
+    return {
+        "total_budget": total_budget,
+        "total_spent": total_spent,
+        "remaining": remaining,
+        "over_limit_categories": len([b for b in response if b["spent"] > b["amount"]]),
+        "budgets": response
+    }
 
 @router.get("/status")
 def budget_status(db: Session = Depends(get_db), user=Depends(get_current_user)):

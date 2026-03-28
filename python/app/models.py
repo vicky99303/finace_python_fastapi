@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Table
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, DateTime, Table, Boolean
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from .database import Base
@@ -27,11 +27,30 @@ class User(Base):
     accounts = relationship("Account", back_populates="user")
     transactions = relationship("Transaction", back_populates="user")
     roles = relationship("Role", secondary=user_roles, backref="users")
+    settings = relationship("UserSettings", back_populates="user", uselist=False)
+
+class UserSettings(Base):
+    __tablename__ = "user_settings"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False)
+
+    full_name = Column(String, nullable=True)
+    currency = Column(String, default="USD")
+    timezone = Column(String, default="Asia/Karachi")
+
+    email_alerts = Column(Boolean, default=True)
+    push_notifications = Column(Boolean, default=False)
+    weekly_reports = Column(Boolean, default=True)
+    dark_mode = Column(Boolean, default=False)
+
+    user = relationship("User", back_populates="settings")
     
 class Account(Base):
     __tablename__ = "accounts"
 
     id = Column(Integer, primary_key=True, index=True)
+    type = Column(String)
     user_id = Column(Integer, ForeignKey("users.id"))
     name = Column(String)
     balance = Column(Float, default=0.0)
@@ -50,7 +69,9 @@ class Transaction(Base):
     category_id = Column(Integer, ForeignKey("categories.id"))
     user_id = Column(Integer, ForeignKey("users.id"))
     category = relationship("Category")
-    
+    user = relationship("User", back_populates="transactions")
+    account = relationship("Account", back_populates="transactions")
+    date = Column(DateTime, default=datetime.utcnow)
 
 class Category(Base):
     __tablename__ = "categories"
@@ -73,7 +94,7 @@ class Budget(Base):
 
     user_id = Column(Integer, ForeignKey("users.id"))
     category_id = Column(Integer, ForeignKey("categories.id"))
-
+    date = Column(DateTime, default=datetime.utcnow)
     category = relationship("Category")
 
 class Goal(Base):

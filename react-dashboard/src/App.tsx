@@ -1,4 +1,4 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import MainLayout from "./layouts/MainLayout";
 import Dashboard from "./pages/Dashboard";
 import Transactions from "./pages/Transactions";
@@ -6,6 +6,9 @@ import Budgets from "./pages/Budgets";
 import Accounts from "./pages/Accounts";
 import Reports from "./pages/Reports";
 import Settings from "./pages/Settings";
+import Login from "./pages/Login";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import { isAuthenticated } from "./utils/auth";
 
 function PlaceholderPage({ title }: { title: string }) {
   return (
@@ -20,7 +23,19 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<MainLayout />}>
+        <Route
+          path="/login"
+          element={isAuthenticated() ? <Navigate to="/" replace /> : <Login />}
+        />
+
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <MainLayout />
+            </ProtectedRoute>
+          }
+        >
           <Route index element={<Dashboard />} />
           <Route path="transactions" element={<Transactions />} />
           <Route path="budgets" element={<Budgets />} />

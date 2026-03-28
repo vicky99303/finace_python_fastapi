@@ -1,5 +1,6 @@
-import { Bell, Search, UserCircle2 } from "lucide-react";
-import { useLocation } from "react-router-dom";
+import { Bell, Search, UserCircle2, LogOut } from "lucide-react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { removeToken } from "../../utils/auth";
 
 const titles: Record<string, { title: string; subtitle: string }> = {
     "/": {
@@ -30,7 +31,13 @@ const titles: Record<string, { title: string; subtitle: string }> = {
 
 export default function Topbar() {
     const location = useLocation();
+    const navigate = useNavigate();
     const current = titles[location.pathname] ?? titles["/"];
+
+    const handleLogout = () => {
+        removeToken();
+        navigate("/login");
+    };
 
     return (
         <header className="flex items-center justify-between gap-4 border-b border-slate-200 bg-white px-4 py-4 md:px-6">
@@ -49,11 +56,23 @@ export default function Topbar() {
                     />
                 </div>
 
-                <button className="rounded-xl border border-slate-200 p-2 transition hover:bg-slate-50">
+                <button type="button" className="rounded-xl border border-slate-200 p-2 transition hover:bg-slate-50">
                     <Bell size={18} className="text-slate-600" />
                 </button>
 
-                <button className="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 transition hover:bg-slate-50">
+                <button
+                    onClick={handleLogout}
+                    className="rounded-xl border border-slate-200 p-2 transition hover:bg-slate-50"
+                    title="Logout"
+                    type="button"
+                >
+                    <LogOut size={18} className="text-slate-600" />
+                </button>
+
+                <button
+                    className="flex items-center gap-2 rounded-xl border border-slate-200 px-3 py-2 transition hover:bg-slate-50"
+                    type="button"
+                >
                     <UserCircle2 size={20} className="text-slate-700" />
                     <span className="hidden text-sm font-medium text-slate-700 md:inline">
                         Abdul Waqar
